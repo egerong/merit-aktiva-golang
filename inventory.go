@@ -1,13 +1,25 @@
-package main
+package merit
 
-import "fmt"
+type Location struct {
+	CompanyID     int    `json:"CompanyId"`
+	LocationID    string `json:"LocationId"`
+	Code          string `json:"Code"`
+	Name          string `json:"Name"`
+	InBPrefix     string `json:"InBPrefix"`
+	InBNextNo     int    `json:"InBNextNo"`
+	OutBPrefix    string `json:"OutBPrefix"`
+	OutBNextNo    int    `json:"OutBNextNo"`
+	Loc2LocPrefix string `json:"Loc2LocPrefix"`
+	Loc2LocNextNo int    `json:"Loc2LocNextNo"`
+	InvSetPrefix  string `json:"InvSetPrefix"`
+	InvSetNextNo  int    `json:"InvSetNextNo"`
+}
 
-func (c *Client) GetListOfLocations() ([]Item, error) {
-	items := []Item{}
-	err := c.post(epGetListOfLocations, map[string]interface{}{}, &items)
+func (c *Client) GetListOfLocations() ([]Location, error) {
+	locations := []Location{}
+	err := c.post(epGetListOfLocations, map[string]interface{}{}, &locations)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(items)
-	return items, nil
+	return locations, nil
 }

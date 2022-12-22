@@ -1,4 +1,4 @@
-package main
+package merit
 
 import (
 	"bytes"
@@ -52,12 +52,13 @@ func (c *Client) signature(timestamp string, payload []byte) string {
 
 // Send a HTTPS POST request with payload to the API
 // Include APIID and signature in the request
-func (c *Client) post(endpoint apiEndpoint, payload map[string]interface{}, dest interface{}) error {
+func (c *Client) post(endpoint apiEndpoint, payload interface{}, dest interface{}) error {
 
 	jsonPayload, err := json.Marshal(payload)
 	if err != nil {
 		return err
 	}
+	c.logger.Sugar().Debugf("Request body: %s", string(jsonPayload))
 	timestamp := time.Now().UTC().Format("20060102150405")
 	signature := c.signature(timestamp, jsonPayload)
 

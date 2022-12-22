@@ -1,4 +1,4 @@
-package main
+package merit
 
 import "log"
 
@@ -109,7 +109,7 @@ const (
 	// epCustomerPaymentReport
 	// epStatementOfProfitOrLoss
 	// epStatementOfFinancialPosition
-	// epInventoryReport
+	epInventoryReport
 	// epSalesReport
 	// epPurchaseReport
 )
@@ -140,7 +140,7 @@ var endpointMap = map[apiEndpoint]string{
 	epGetItems:      "v1/getitems",
 	epGetItemGroups: "v2/getitemgroups",
 	// Reports
-
+	epInventoryReport: "v2/getinventoryreport",
 }
 
 func (e apiEndpoint) String() string {

@@ -1,4 +1,4 @@
-package main
+package merit
 
 import (
 	"fmt"
@@ -24,12 +24,20 @@ type Item struct {
 	ItemUnitCost         float64 `json:"ItemUnitCost"`
 	InventoryCost        float64 `json:"InventoryCost"`
 	ItemGroupName        string  `json:"ItemGroupName"`
-	DefLoc_Name          string  `json:"DefLoc_Name"`
+	DefLocName           string  `json:"DefLoc_Name"`
+	EANCode              string  `json:"EANCode"`
 }
 
-func (c *Client) GetItems() ([]Item, error) {
+type GetItemsQuery struct {
+	ID           string `json:"Id,omitempty"`
+	Code         string `json:"Code,omitempty"`
+	Description  string `json:"Description,omitempty"`
+	LocationCode string `json:"LocationCode,omitempty"`
+}
+
+func (c *Client) GetItems(query GetItemsQuery) ([]Item, error) {
 	items := []Item{}
-	err := c.post(epGetItems, map[string]interface{}{}, &items)
+	err := c.post(epGetItems, query, &items)
 	if err != nil {
 		return nil, err
 	}
