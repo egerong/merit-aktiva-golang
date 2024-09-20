@@ -1,13 +1,8 @@
 package merit
 
-import "log"
-
-const apiPath = "api/"
-
-type apiEndpoint int
+type apiEndpoint string
 
 const (
-	_ apiEndpoint = iota
 
 	// Sales invoices
 	// epGetListOfSalesInvoices apiEndpoint = iota
@@ -16,7 +11,7 @@ const (
 	// epCreateSalesInvoice
 
 	// Sales offers
-	epGetListOfSalesOffers
+	epGetListOfSalesOffers apiEndpoint = "v2/getoffers"
 	// epCreateSalesOffer
 	// epSetOfferStatus
 	// epCreateInvoiceFromOffer
@@ -40,7 +35,7 @@ const (
 	// epCreatePurchaseInvoice
 
 	// Inventory movements
-	epGetListOfLocations
+	epGetListOfLocations apiEndpoint = "v2/getlocations"
 	// epCreateInventoryMovement
 
 	// Payments
@@ -100,57 +95,18 @@ const (
 	// epGetFinancialYearsList
 
 	// Items
-	epGetItems
-	epGetItemGroups
-	epAddItems
-	epAddItemGroups
-	epUpdateItem
+	epGetItems      apiEndpoint = "v1/getitems"
+	epGetItemGroups apiEndpoint = "v2/getitemgroups"
+	// epAddItems
+	// epAddItemGroups
+	// epUpdateItem
 
 	// Reports
 	// epCustomerDebtsReport
 	// epCustomerPaymentReport
 	// epStatementOfProfitOrLoss
 	// epStatementOfFinancialPosition
-	epInventoryReport
+	epInventoryReport apiEndpoint = "v2/getinventoryreport"
 	// epSalesReport
 	// epPurchaseReport
 )
-
-var endpointMap = map[apiEndpoint]string{
-	// Sales invoices
-	// Sales offers
-	epGetListOfSalesOffers: "v2/getoffers",
-	// Get price
-	// Recurring Invoices
-	// Purchase invoices
-	// Inventory movements
-	epGetListOfLocations: "v2/getlocations",
-	// Payments
-	// General ledger transactions
-	// Tax list
-	// Send tax
-	// Customers
-	// Vendors
-	// Accounts list
-	// Project List
-	// Cost centers list
-	// Dimensions
-	// Departments List
-	// Unit of measure list
-	// Banks list
-	// Financial years
-	// Items
-	epGetItems:      "v1/getitems",
-	epGetItemGroups: "v2/getitemgroups",
-	// Reports
-	epInventoryReport: "v2/getinventoryreport",
-}
-
-func (e apiEndpoint) String() string {
-	epStr, ok := endpointMap[e]
-	if !ok {
-		log.Fatalf("Unknown endpoint: %d", e)
-	}
-
-	return apiPath + epStr
-}

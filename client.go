@@ -19,6 +19,7 @@ type API_HOST string
 const (
 	API_HOST_EST API_HOST = "aktiva.merit.ee"
 	API_HOST_FIN API_HOST = "aktiva.meritaktiva.fi"
+	apiPath      string   = "api/"
 )
 
 type Client struct {
@@ -70,7 +71,7 @@ func (c *Client) post(endpoint apiEndpoint, payload interface{}, dest interface{
 	perform := url.URL{
 		Scheme:   "https",
 		Host:     string(c.apiHost),
-		Path:     endpoint.String(),
+		Path:     apiPath + string(endpoint),
 		RawQuery: v.Encode(),
 	}
 
