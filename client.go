@@ -90,18 +90,18 @@ func (c *Client) post(endpoint apiEndpoint, payload interface{}, dest interface{
 	}
 	defer resp.Body.Close()
 
+	body := &bytes.Buffer{}
+	_, err = body.ReadFrom(resp.Body)
+	if err != nil {
+		return err
+	}
+	c.logger.Sugar().Debugf("Response body: %s", body.String())
+
 	if resp.StatusCode != 200 {
 		return fmt.Errorf("API returned status code %d", resp.StatusCode)
 	}
 
 	if dest != nil {
-		body := &bytes.Buffer{}
-		_, err = body.ReadFrom(resp.Body)
-		if err != nil {
-			return err
-		}
-		c.logger.Sugar().Debugf("Response body: %s", body.String())
-
 		if err = json.NewDecoder(body).Decode(&dest); err != nil {
 			return err
 		}
