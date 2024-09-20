@@ -16,10 +16,12 @@ const (
 	// epCreateSalesInvoice
 
 	// Sales offers
-	// epGetListOfSalesOffers
+	epGetListOfSalesOffers
 	// epCreateSalesOffer
 	// epSetOfferStatus
 	// epCreateInvoiceFromOffer
+	// epGetSalesOfferDetails
+	// epUpdateSalesOffer
 
 	// Get price
 	// epGetPrice
@@ -117,6 +119,7 @@ const (
 var endpointMap = map[apiEndpoint]string{
 	// Sales invoices
 	// Sales offers
+	epGetListOfSalesOffers: "v2/getoffers",
 	// Get price
 	// Recurring Invoices
 	// Purchase invoices
