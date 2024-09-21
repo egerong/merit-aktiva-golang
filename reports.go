@@ -57,6 +57,23 @@ type getPurchaseReportQueryFormated struct {
 	FixAssetFilter []string   `json:"FixAssetFilter,omitempty"`
 	ByEntryNo      bool       `json:"ByEntryNo,omitempty"`
 }
+
+func (query GetPurchaseReportQuery) format(repType reportType) getPurchaseReportQueryFormated {
+	return getPurchaseReportQueryFormated{
+		StartDate:      queryDate{query.StartDate},
+		EndDate:        queryDate{query.EndDate},
+		ReportType:     repType,
+		VendChoice:     query.VendChoice,
+		VendGrpFilter:  query.VendGrpFilter,
+		VendFilter:     query.VendFilter,
+		ItemGrFilter:   query.ItemGrFilter,
+		ItemFilter:     query.ItemFilter,
+		DepartFilter:   query.DepartFilter,
+		FixAssetFilter: query.FixAssetFilter,
+		ByEntryNo:      query.ByEntryNo,
+	}
+}
+
 type PurchaseReportByInvoice struct {
 	DocId          string  `json:"docId"`
 	InvoiceNo      string  `json:"invoiceNo"`
@@ -78,44 +95,18 @@ type PurchaseReportByInvoice struct {
 	Ctry           string  `json:"ctry"`
 }
 
-type GetPurchaseReportByInvoiceQuery struct {
-	StartDate      time.Time
-	EndDate        time.Time
-	VendChoice     int
-	VendGrpFilter  string
-	VendFilter     string
-	ItemGrFilter   string
-	ItemFilter     []string
-	DepartFilter   []string
-	FixAssetFilter []string
-	ByEntryNo      bool
-}
-
 func (c *Client) GetPurchaseReportByInvoice(query GetPurchaseReportQuery) ([]PurchaseReportByInvoice, error) {
 	err := query.validate()
 	if err != nil {
 		return nil, err
 	}
-	queryFormated := getPurchaseReportQueryFormated{
-		StartDate:      queryDate{query.StartDate},
-		EndDate:        queryDate{query.EndDate},
-		ReportType:     reportTypeByInvoices,
-		VendChoice:     query.VendChoice,
-		VendGrpFilter:  query.VendGrpFilter,
-		VendFilter:     query.VendFilter,
-		ItemGrFilter:   query.ItemGrFilter,
-		ItemFilter:     query.ItemFilter,
-		DepartFilter:   query.DepartFilter,
-		FixAssetFilter: query.FixAssetFilter,
-		ByEntryNo:      query.ByEntryNo,
-	}
+	queryFormated := query.format(reportTypeByInvoices)
 	reports := []PurchaseReportByInvoice{}
 	err = c.post(epGetPurchaseReport, queryFormated, &reports)
 	if err != nil {
 		return nil, err
 	}
 	return reports, nil
-
 }
 
 type PurchaseReportByVendor struct {
@@ -135,6 +126,20 @@ type PurchaseReportByVendor struct {
 	LnCnt           float64 `json:"lnCnt"`
 	DiscAmt         float64 `json:"discAmt"`
 	CDiscAmt        float64 `json:"cDiscAmt"`
+}
+
+func (c *Client) GetPurchaseReportByVendor(query GetPurchaseReportQuery) ([]PurchaseReportByVendor, error) {
+	err := query.validate()
+	if err != nil {
+		return nil, err
+	}
+	queryFormated := query.format(reportTypeByVendors)
+	reports := []PurchaseReportByVendor{}
+	err = c.post(epGetPurchaseReport, queryFormated, &reports)
+	if err != nil {
+		return nil, err
+	}
+	return reports, nil
 }
 
 type PurchaseReportByArticle struct {
@@ -157,26 +162,13 @@ func (c *Client) GetPurchaseReportByArticle(query GetPurchaseReportQuery) ([]Pur
 	if err != nil {
 		return nil, err
 	}
-	queryFormated := getPurchaseReportQueryFormated{
-		StartDate:      queryDate{query.StartDate},
-		EndDate:        queryDate{query.EndDate},
-		ReportType:     reportTypeByArticles,
-		VendChoice:     query.VendChoice,
-		VendGrpFilter:  query.VendGrpFilter,
-		VendFilter:     query.VendFilter,
-		ItemGrFilter:   query.ItemGrFilter,
-		ItemFilter:     query.ItemFilter,
-		DepartFilter:   query.DepartFilter,
-		FixAssetFilter: query.FixAssetFilter,
-		ByEntryNo:      query.ByEntryNo,
-	}
+	queryFormated := query.format(reportTypeByArticles)
 	reports := []PurchaseReportByArticle{}
 	err = c.post(epGetPurchaseReport, queryFormated, &reports)
 	if err != nil {
 		return nil, err
 	}
 	return reports, nil
-
 }
 
 type PurchaseReportByFixedAsset struct {
@@ -191,4 +183,18 @@ type PurchaseReportByFixedAsset struct {
 	RemAmount    float64 `json:"remAmount"`
 	DocNo        string  `json:"docNo"`
 	DocDate      string  `json:"docDate"`
+}
+
+func (c *Client) GetPurchaseReportByFixedAsset(query GetPurchaseReportQuery) ([]PurchaseReportByFixedAsset, error) {
+	err := query.validate()
+	if err != nil {
+		return nil, err
+	}
+	queryFormated := query.format(reportTypeByFixedAssets)
+	reports := []PurchaseReportByFixedAsset{}
+	err = c.post(epGetPurchaseReport, queryFormated, &reports)
+	if err != nil {
+		return nil, err
+	}
+	return reports, nil
 }
