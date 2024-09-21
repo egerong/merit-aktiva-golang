@@ -49,7 +49,7 @@ type GetInventoryReportQuery struct {
 type getInventoryReportQueryFormated struct {
 	ArticleGroups    []string  `json:"ArticleGroups,omitempty"`
 	Location         string    `json:"Location,omitempty"`
-	RepDate          QueryDate `json:"RepDate,omitempty"`
+	RepDate          queryDate `json:"RepDate,omitempty"`
 	ShowZero         bool      `json:"ShowZero,omitempty"`
 	WithReservations bool      `json:"WithReservations,omitempty"`
 }
@@ -58,7 +58,7 @@ func (c *Client) GetInventoryReport(query GetInventoryReportQuery) ([]Article, e
 	queryFormated := getInventoryReportQueryFormated{
 		ArticleGroups:    query.ArticleGroups,
 		Location:         query.Location,
-		RepDate:          QueryDate{query.RepDate},
+		RepDate:          queryDate{query.RepDate},
 		ShowZero:         query.ShowZero,
 		WithReservations: query.WithReservations,
 	}
@@ -119,16 +119,16 @@ type GetInventoryMovementsQuery struct {
 }
 
 type getInventoryMovementsQueryFormated struct {
-	PeriodStart QueryDate `json:"PeriodStart,omitempty"`
-	PeriodEnd   QueryDate `json:"PeriodEnd,omitempty"`
+	PeriodStart queryDate `json:"PeriodStart,omitempty"`
+	PeriodEnd   queryDate `json:"PeriodEnd,omitempty"`
 	WithLines   bool      `json:"WithLines,omitempty"`
 	ChangedDate int       `json:"ChangedDate,omitempty"`
 }
 
 func (c *Client) GetInventoryMovements(query GetInventoryMovementsQuery) ([]InventoryMovement, error) {
 	queryFormated := getInventoryMovementsQueryFormated{
-		PeriodStart: QueryDate{query.PeriodStart},
-		PeriodEnd:   QueryDate{query.PeriodEnd},
+		PeriodStart: queryDate{query.PeriodStart},
+		PeriodEnd:   queryDate{query.PeriodEnd},
 		WithLines:   query.WithLines,
 		ChangedDate: query.ChangedDate,
 	}

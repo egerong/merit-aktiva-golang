@@ -52,16 +52,16 @@ type GetSalesOffersQuery struct {
 }
 
 type getSalesOffersQueryFormated struct {
-	PeriodStart QueryDate `json:"PeriodStart,omitempty"`
-	PeriodEnd   QueryDate `json:"PeriodEnd,omitempty"`
+	PeriodStart queryDate `json:"PeriodStart,omitempty"`
+	PeriodEnd   queryDate `json:"PeriodEnd,omitempty"`
 	DateType    int       `json:"DateType,omitempty"`
 	UnPaid      bool      `json:"UnPaid,omitempty"`
 }
 
 func (c *Client) GetListOfSalesOffers(query GetSalesOffersQuery) ([]SalesOffer, error) {
 	formatQuery := getSalesOffersQueryFormated{
-		PeriodStart: QueryDate{query.PeriodStart},
-		PeriodEnd:   QueryDate{query.PeriodEnd},
+		PeriodStart: queryDate{query.PeriodStart},
+		PeriodEnd:   queryDate{query.PeriodEnd},
 		DateType:    query.DateType,
 		UnPaid:      query.UnPaid,
 	}

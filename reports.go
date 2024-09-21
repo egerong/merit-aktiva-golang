@@ -1,32 +1,37 @@
 package merit
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
-/*
-StartDate	Date
-EndDate	Date
-ReportType	Int	1-By Invoices, 2-By Vendors, 3-By-Articles, 4-By Fixed assets
-VendChoice	Int	1-Vendor and Reporting entry, 2-Vendor, 3-Reporting entry
-VendGrpFilter	Str
-VendFilter	Str
-ItemGrFilter	Str
-ItemFilter	Str	Array of items
-DepartFilter	Str	Array of departments
-FixAssetFilter	Str	Array of Fixed assets
-ByEntryNo	Bool	true/false
-*/
-
+// GetPurchaseReportQuery represents the query parameters for retrieving purchase reports.
 type GetPurchaseReportQuery struct {
-	StartDate      time.Time
-	EndDate        time.Time
-	VendChoice     int
-	VendGrpFilter  string
-	VendFilter     string
-	ItemGrFilter   string
-	ItemFilter     []string
-	DepartFilter   []string
-	FixAssetFilter []string
-	ByEntryNo      bool
+	StartDate      time.Time // Start date of the report
+	EndDate        time.Time // End date of the report
+	VendChoice     int       // Vendor choice: 1-Vendor and Reporting entry, 2-Vendor, 3-Reporting entry
+	VendGrpFilter  string    // Vendor group filter
+	VendFilter     string    // Vendor filter
+	ItemGrFilter   string    // Item group filter
+	ItemFilter     []string  // Array of items filter
+	DepartFilter   []string  // Array of departments filter
+	FixAssetFilter []string  // Array of Fixed assets filter
+	ByEntryNo      bool      // Flag to include entry number in the report
+}
+
+type ErrInvalidVendorChoice struct {
+	Choice int
+}
+
+func (e ErrInvalidVendorChoice) Error() string {
+	return fmt.Sprintf("Invalid vendor choice: %d. Valid choices are 1, 2, 3", e.Choice)
+}
+
+func (query GetPurchaseReportQuery) validate() error {
+	if query.VendChoice < 1 || query.VendChoice > 3 {
+		return ErrInvalidVendorChoice{query.VendChoice}
+	}
+	return nil
 }
 
 type reportType int
@@ -40,11 +45,11 @@ const (
 )
 
 type getPurchaseReportQueryFormated struct {
-	StartDate      QueryDate  `json:"StartDate,omitempty"`
-	EndDate        QueryDate  `json:"EndDate,omitempty"`
-	ReportType     reportType `json:"ReportType,omitempty"`    // 1-By Invoices, 2-By Vendors, 3-By-Articles, 4-By Fixed assets
-	VendChoice     int        `json:"VendChoice,omitempty"`    // 1-Vendor and Reporting entry, 2-Vendor, 3-Reporting entry
-	VendGrpFilter  string     `json:"VendGrpFilter,omitempty"` // 1-Vendor and Reporting entry, 2-Vendor, 3-Reporting entry
+	StartDate      queryDate  `json:"StartDate,omitempty"`
+	EndDate        queryDate  `json:"EndDate,omitempty"`
+	ReportType     reportType `json:"ReportType,omitempty"`
+	VendChoice     int        `json:"VendChoice,omitempty"`
+	VendGrpFilter  string     `json:"VendGrpFilter,omitempty"`
 	VendFilter     string     `json:"VendFilter,omitempty"`
 	ItemGrFilter   string     `json:"ItemGrFilter,omitempty"`
 	ItemFilter     []string   `json:"ItemFilter,omitempty"`
@@ -52,7 +57,6 @@ type getPurchaseReportQueryFormated struct {
 	FixAssetFilter []string   `json:"FixAssetFilter,omitempty"`
 	ByEntryNo      bool       `json:"ByEntryNo,omitempty"`
 }
-
 type PurchaseReportByInvoice struct {
 	DocId          string  `json:"docId"`
 	InvoiceNo      string  `json:"invoiceNo"`
@@ -88,9 +92,13 @@ type GetPurchaseReportByInvoiceQuery struct {
 }
 
 func (c *Client) GetPurchaseReportByInvoice(query GetPurchaseReportQuery) ([]PurchaseReportByInvoice, error) {
+	err := query.validate()
+	if err != nil {
+		return nil, err
+	}
 	queryFormated := getPurchaseReportQueryFormated{
-		StartDate:      QueryDate{query.StartDate},
-		EndDate:        QueryDate{query.EndDate},
+		StartDate:      queryDate{query.StartDate},
+		EndDate:        queryDate{query.EndDate},
 		ReportType:     reportTypeByInvoices,
 		VendChoice:     query.VendChoice,
 		VendGrpFilter:  query.VendGrpFilter,
@@ -102,7 +110,7 @@ func (c *Client) GetPurchaseReportByInvoice(query GetPurchaseReportQuery) ([]Pur
 		ByEntryNo:      query.ByEntryNo,
 	}
 	reports := []PurchaseReportByInvoice{}
-	err := c.post(epGetPurchaseReport, queryFormated, &reports)
+	err = c.post(epGetPurchaseReport, queryFormated, &reports)
 	if err != nil {
 		return nil, err
 	}
@@ -140,14 +148,18 @@ type PurchaseReportByArticle struct {
 	Quantity     float64 `json:"quantity"`
 	Price        float64 `json:"price"`
 	Amount       float64 `json:"amount"`
-	UOMId1       string  `json:"uomId1"`
-	UOMId2       string  `json:"uomId2"`
+	UomID1       string  `json:"uomId1"`
+	UomID2       string  `json:"uomId2"`
 }
 
 func (c *Client) GetPurchaseReportByArticle(query GetPurchaseReportQuery) ([]PurchaseReportByArticle, error) {
+	err := query.validate()
+	if err != nil {
+		return nil, err
+	}
 	queryFormated := getPurchaseReportQueryFormated{
-		StartDate:      QueryDate{query.StartDate},
-		EndDate:        QueryDate{query.EndDate},
+		StartDate:      queryDate{query.StartDate},
+		EndDate:        queryDate{query.EndDate},
 		ReportType:     reportTypeByArticles,
 		VendChoice:     query.VendChoice,
 		VendGrpFilter:  query.VendGrpFilter,
@@ -159,7 +171,7 @@ func (c *Client) GetPurchaseReportByArticle(query GetPurchaseReportQuery) ([]Pur
 		ByEntryNo:      query.ByEntryNo,
 	}
 	reports := []PurchaseReportByArticle{}
-	err := c.post(epGetPurchaseReport, queryFormated, &reports)
+	err = c.post(epGetPurchaseReport, queryFormated, &reports)
 	if err != nil {
 		return nil, err
 	}
