@@ -35,7 +35,8 @@ const (
 	// epCreatePurchaseInvoice
 
 	// Inventory movements
-	epGetListOfLocations apiEndpoint = "v2/getlocations"
+	epGetListOfLocations          apiEndpoint = "v2/getlocations"
+	epGetListOfInventoryMovements apiEndpoint = "v2/getinvmovements"
 	// epCreateInventoryMovement
 
 	// Payments

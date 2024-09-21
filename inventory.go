@@ -69,3 +69,73 @@ func (c *Client) GetInventoryReport(query GetInventoryReportQuery) ([]Article, e
 	}
 	return articles, nil
 }
+
+type InventoryMovement struct {
+	DocumentID     string      `json:"DocumentId"`
+	DocDate        string      `json:"DocDate"`
+	DocNo          string      `json:"DocNo"`
+	Location1Code  string      `json:"Location1Code"`
+	Location2Code  string      `json:"Location2Code"`
+	DepartmentCode string      `json:"DepartmentCode"`
+	Type           int         `json:"Type"`
+	Comment        string      `json:"Comment"`
+	Dimensions     []Dimension `json:"Dimensions"`
+	Rows           []Row       `json:"Rows"`
+	ChangedDate    string      `json:"ChangedDate"`
+}
+
+type Row struct {
+	HeaderID      string          `json:"HeaderId"`
+	LineID        string          `json:"LineId"`
+	ArticleCode   string          `json:"ArticleCode"`
+	UOMName       string          `json:"UOMName"`
+	Quantity      float64         `json:"Quantity"`
+	Amount        float64         `json:"Amount"`
+	Dimensions    []CostDimension `json:"Dimensions"`
+	GLAccountCode string          `json:"GLAccountCode"`
+}
+
+type CostDimension struct {
+	HeaderID    string  `json:"HeaderId"`
+	LineID      string  `json:"LineId"`
+	DimID       int     `json:"DimId"`
+	Code        string  `json:"Code"`
+	AllocPct    float64 `json:"AllocPct"`
+	AllocAmount float64 `json:"AllocAmount"`
+}
+
+type Dimension struct {
+	ID         string `json:"Id"`
+	DimID      int    `json:"DimId"`
+	DimValueID string `json:"DimValueId"`
+	DimCode    string `json:"DimCode"`
+}
+
+type GetInventoryMovementsQuery struct {
+	PeriodStart time.Time `json:"PeriodStart,omitempty"`
+	PeriodEnd   time.Time `json:"PeriodEnd,omitempty"`
+	WithLines   bool      `json:"WithLines,omitempty"`
+	ChangedDate int       `json:"ChangedDate,omitempty"`
+}
+
+type getInventoryMovementsQueryFormated struct {
+	PeriodStart QueryDate `json:"PeriodStart,omitempty"`
+	PeriodEnd   QueryDate `json:"PeriodEnd,omitempty"`
+	WithLines   bool      `json:"WithLines,omitempty"`
+	ChangedDate int       `json:"ChangedDate,omitempty"`
+}
+
+func (c *Client) GetInventoryMovements(query GetInventoryMovementsQuery) ([]InventoryMovement, error) {
+	queryFormated := getInventoryMovementsQueryFormated{
+		PeriodStart: QueryDate{query.PeriodStart},
+		PeriodEnd:   QueryDate{query.PeriodEnd},
+		WithLines:   query.WithLines,
+		ChangedDate: query.ChangedDate,
+	}
+	inventoryMovements := []InventoryMovement{}
+	err := c.post(epGetListOfInventoryMovements, queryFormated, &inventoryMovements)
+	if err != nil {
+		return nil, err
+	}
+	return inventoryMovements, nil
+}
