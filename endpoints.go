@@ -109,5 +109,5 @@ const (
 	// epStatementOfFinancialPosition
 	epGetInventoryReport apiEndpoint = "v2/getinventoryreport"
 	// epSalesReport
-	// epPurchaseReport
+	epGetPurchaseReport apiEndpoint = "v2/getpurchrep"
 )
