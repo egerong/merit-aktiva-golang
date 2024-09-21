@@ -1,6 +1,8 @@
 package merit
 
-import "time"
+import (
+	"time"
+)
 
 type SalesOffer struct {
 	SIHId           string  `json:"SIHId"`
@@ -42,30 +44,29 @@ type SalesOffer struct {
 	ChangedDate     string  `json:"ChangedDate"`
 }
 
-type salesOfferRequest struct {
-	PeriodStart string `json:"PeriodStart"`
-	PeriodEnd   string `json:"PeriodEnd"`
-	DateType    int    `json:"DateType"`
-	UnPaid      bool   `json:"UnPaid"`
+type GetSalesOffersQuery struct {
+	PeriodStart time.Time `json:"PeriodStart,omitempty"`
+	PeriodEnd   time.Time `json:"PeriodEnd,omitempty"`
+	DateType    int       `json:"DateType,omitempty"`
+	UnPaid      bool      `json:"UnPaid,omitempty"`
 }
 
-func (c *Client) GetListOfSalesOffers(
-	periodStart time.Time,
-	periodEnd time.Time,
-	dateType int,
-	unPaid bool,
-) ([]SalesOffer, error) {
+type getSalesOffersQueryFormated struct {
+	PeriodStart QueryDate `json:"PeriodStart,omitempty"`
+	PeriodEnd   QueryDate `json:"PeriodEnd,omitempty"`
+	DateType    int       `json:"DateType,omitempty"`
+	UnPaid      bool      `json:"UnPaid,omitempty"`
+}
+
+func (c *Client) GetListOfSalesOffers(query GetSalesOffersQuery) ([]SalesOffer, error) {
+	formatQuery := getSalesOffersQueryFormated{
+		PeriodStart: QueryDate{query.PeriodStart},
+		PeriodEnd:   QueryDate{query.PeriodEnd},
+		DateType:    query.DateType,
+		UnPaid:      query.UnPaid,
+	}
 	salesOffers := []SalesOffer{}
-	err := c.post(
-		epGetListOfSalesOffers,
-		salesOfferRequest{
-			PeriodStart: periodStart.Format("20060102"),
-			PeriodEnd:   periodEnd.Format("20060102"),
-			DateType:    dateType,
-			UnPaid:      unPaid,
-		},
-		&salesOffers,
-	)
+	err := c.post(epGetListOfSalesOffers, formatQuery, &salesOffers)
 	if err != nil {
 		return nil, err
 	}
