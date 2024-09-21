@@ -106,7 +106,7 @@ const (
 	// epCustomerPaymentReport
 	// epStatementOfProfitOrLoss
 	// epStatementOfFinancialPosition
-	epInventoryReport apiEndpoint = "v2/getinventoryreport"
+	epGetInventoryReport apiEndpoint = "v2/getinventoryreport"
 	// epSalesReport
 	// epPurchaseReport
 )

@@ -1,5 +1,7 @@
 package merit
 
+import "time"
+
 type Location struct {
 	CompanyID     int    `json:"CompanyId"`
 	LocationID    string `json:"LocationId"`
@@ -22,4 +24,48 @@ func (c *Client) GetListOfLocations() ([]Location, error) {
 		return nil, err
 	}
 	return locations, nil
+}
+
+type Article struct {
+	ItemCode         string  `json:"ItemCode"`
+	EANCode          string  `json:"EANCode"`
+	ItemName         string  `json:"ItemName"`
+	LocName          string  `json:"LocName"`
+	Quantity         float64 `json:"Quantity"`
+	ReservedQuantity float64 `json:"ReservedQuantity"`
+	UnitCode         string  `json:"UnitCode"`
+	Amount           float64 `json:"Amount"`
+	Price            float64 `json:"Price"`
+}
+
+type GetInventoryReportQuery struct {
+	ArticleGroups    []string  `json:"ArticleGroups,omitempty"`
+	Location         string    `json:"Location,omitempty"`
+	RepDate          time.Time `json:"RepDate,omitempty"`
+	ShowZero         bool      `json:"ShowZero,omitempty"`
+	WithReservations bool      `json:"WithReservations,omitempty"`
+}
+
+type getInventoryReportQueryFormated struct {
+	ArticleGroups    []string  `json:"ArticleGroups,omitempty"`
+	Location         string    `json:"Location,omitempty"`
+	RepDate          QueryDate `json:"RepDate,omitempty"`
+	ShowZero         bool      `json:"ShowZero,omitempty"`
+	WithReservations bool      `json:"WithReservations,omitempty"`
+}
+
+func (c *Client) GetInventoryReport(query GetInventoryReportQuery) ([]Article, error) {
+	queryFormated := getInventoryReportQueryFormated{
+		ArticleGroups:    query.ArticleGroups,
+		Location:         query.Location,
+		RepDate:          QueryDate{query.RepDate},
+		ShowZero:         query.ShowZero,
+		WithReservations: query.WithReservations,
+	}
+	articles := []Article{}
+	err := c.post(epGetInventoryReport, queryFormated, &articles)
+	if err != nil {
+		return nil, err
+	}
+	return articles, nil
 }
