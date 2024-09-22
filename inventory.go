@@ -58,7 +58,7 @@ func (c *Client) GetInventoryReport(query GetInventoryReportQuery) ([]Article, e
 	queryFormated := getInventoryReportQueryFormated{
 		ArticleGroups:    query.ArticleGroups,
 		Location:         query.Location,
-		RepDate:          queryDate{query.RepDate},
+		RepDate:          queryDate{query.RepDate, "20060102"},
 		ShowZero:         query.ShowZero,
 		WithReservations: query.WithReservations,
 	}
@@ -127,8 +127,8 @@ type getInventoryMovementsQueryFormated struct {
 
 func (c *Client) GetInventoryMovements(query GetInventoryMovementsQuery) ([]InventoryMovement, error) {
 	queryFormated := getInventoryMovementsQueryFormated{
-		PeriodStart: queryDate{query.PeriodStart},
-		PeriodEnd:   queryDate{query.PeriodEnd},
+		PeriodStart: queryDate{query.PeriodStart, "20060102"},
+		PeriodEnd:   queryDate{query.PeriodEnd, "20060102"},
 		WithLines:   query.WithLines,
 		ChangedDate: query.ChangedDate,
 	}

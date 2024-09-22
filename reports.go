@@ -60,8 +60,8 @@ type getPurchaseReportQueryFormated struct {
 
 func (query GetPurchaseReportQuery) format(repType reportType) getPurchaseReportQueryFormated {
 	return getPurchaseReportQueryFormated{
-		StartDate:      queryDate{query.StartDate},
-		EndDate:        queryDate{query.EndDate},
+		StartDate:      queryDate{query.StartDate, "20060102"},
+		EndDate:        queryDate{query.EndDate, "20060102"},
 		ReportType:     repType,
 		VendChoice:     query.VendChoice,
 		VendGrpFilter:  query.VendGrpFilter,
