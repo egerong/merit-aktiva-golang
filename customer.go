@@ -1,35 +1,28 @@
 package merit
 
-import "github.com/shopspring/decimal"
+import (
+	// "merit"
 
-/*
-Id	Guid	If filled and customer is found in the database then following fields are not important. If not found, the customer is added using the following fields.
-Name	Str 150	Required when customer is added
-RegNo	Str 30
-NotTDCustomer	Bool	Required when customer is added. EE True for physical persons and foreign companies. PL True for physical persons. Allowed “true” or “false” (lowercase).
-VatRegNo	Str 30
-CurrencyCode	Str 30
-PaymentDeadLine	Int	If missing then taken from default settings.
-OverDueCharge	Decimal 5.2	If missing then taken from default settings.
-Address	Str 100
-City	Str 30
-County	Str 100
-PostalCode	Str 15
-CountryCode	Str 2	Required when adding
-PhoneNo	Str 50
-PhoneNo2	Str 50
-HomePage	Str 80
-Email	Str 80
-SalesInvLang	Str 8	Invoice language for this specific customer.(ET,EN,RU,FI,PL,SV)
-GLNCode	Str 14
-PartyCode	Str 20
-RefNoBase	Str 36
-EInvPaymId	Str 20
-EInvOperator	Int	1 - Not exist, 2 - E-invoices to the bank through Omniva, 3 - Bank ( full extent E-invoice), 4- Bank (limited extent E-invoice)
-BankAccount	Str 50
-*/
+	"github.com/shopspring/decimal"
+)
 
-type Customer struct {
+type GetCustomersQuery struct {
+	ID       string `json:"Id,omitempty"`       // If filled, next fields will be ignored
+	RegNo    string `json:"RegNo,omitempty"`    // Exact match.
+	VatRegNo string `json:"VatRegNo,omitempty"` // Exact match.
+	Name     string `json:"Name,omitempty"`     // Broad match.
+}
+
+func (c *Client) GetCustomers(query GetCustomersQuery) ([]OfferCustomer, error) {
+	customers := []OfferCustomer{}
+	err := c.post(epGetListOfCustomers, query, nil)
+	if err != nil {
+		return nil, err
+	}
+	return customers, nil
+}
+
+type OfferCustomer struct {
 	Id              string          `json:"Id,omitempty"`   // If filled and customer is found in the database then following fields are not important. If not found, the customer is added using the following fields.
 	Name            string          `json:"Name,omitempty"` // Required when customer is added
 	RegNo           string          `json:"RegNo,omitempty"`

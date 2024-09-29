@@ -60,7 +60,7 @@ const (
 	// epSendTax
 
 	// Customers
-	// epGetListOfCustomers
+	epGetListOfCustomers apiEndpoint = "v2/getcustomers"
 	// epCreateCustomer
 	// epUpdateCustomer
 
