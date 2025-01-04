@@ -13,18 +13,18 @@ type GetCustomersQuery struct {
 	Name     string `json:"Name,omitempty"`     // Broad match.
 }
 
-func (c *Client) GetCustomers(query GetCustomersQuery) ([]OfferCustomer, error) {
-	customers := []OfferCustomer{}
-	err := c.post(epGetListOfCustomers, query, nil)
+func (c *Client) GetCustomers(query GetCustomersQuery) ([]CustomerObject, error) {
+	customers := []CustomerObject{}
+	err := c.post(epGetListOfCustomers, query, &customers)
 	if err != nil {
 		return nil, err
 	}
 	return customers, nil
 }
 
-type OfferCustomer struct {
-	Id              string          `json:"Id,omitempty"`   // If filled and customer is found in the database then following fields are not important. If not found, the customer is added using the following fields.
-	Name            string          `json:"Name,omitempty"` // Required when customer is added
+type CustomerObject struct {
+	Id              string          `json:"CustomerId,omitempty"` // If filled and customer is found in the database then following fields are not important. If not found, the customer is added using the following fields.
+	Name            string          `json:"Name,omitempty"`       // Required when customer is added
 	RegNo           string          `json:"RegNo,omitempty"`
 	NotTDCustomer   bool            `json:"NotTDCustomer,omitempty"` // Required when customer is added. EE True for physical persons and foreign companies. PL True for physical persons. Allowed “true” or “false” (lowercase).
 	VatRegNo        string          `json:"VatRegNo,omitempty"`

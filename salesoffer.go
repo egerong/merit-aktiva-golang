@@ -80,7 +80,7 @@ func (c *Client) GetListOfSalesOffers(query GetSalesOffersQuery) ([]SalesOffer, 
 }
 
 type CreateSalesOfferQuery struct {
-	Customer       OfferCustomer // CustomerObject
+	Customer       CustomerObject // CustomerObject
 	DocDate        time.Time
 	ExpireDate     time.Time // if DocType 2 or 3, ExpireDate=DueDate
 	DeliveryDate   time.Time
