@@ -54,7 +54,7 @@ const (
 	// epGetGeneralLedgerTransactionFullDetails
 
 	// Tax list
-	// epGetTaxList
+	epGetListOfTaxes apiEndpoint = "v1/gettaxes"
 
 	// Send tax
 	// epSendTax
