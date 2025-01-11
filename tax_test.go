@@ -16,3 +16,16 @@ func TestGetTaxes(t *testing.T) {
 	}
 	t.Log(string(j))
 }
+
+func TestGetTaxByCode(t *testing.T) {
+	code := "22%"
+	tax, err := testClient.GetTaxByCode(code)
+	if err != nil {
+		t.Error(err)
+	}
+	j, err := json.MarshalIndent(tax, "", "  ")
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(string(j))
+}

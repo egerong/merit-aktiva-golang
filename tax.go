@@ -1,6 +1,7 @@
 package merit
 
 import (
+	"github.com/Microsoft/go-winio/pkg/guid"
 	"github.com/shopspring/decimal"
 )
 
@@ -18,7 +19,7 @@ type TaxObject struct {
 // TaxPct	Decimal 2.2
 
 type Tax struct {
-	ID     string          `json:"Id"`
+	ID     guid.GUID       `json:"Id"`
 	Code   string          `json:"Code"`
 	Name   string          `json:"Name"`
 	NameEN string          `json:"NameEN"`
@@ -33,4 +34,17 @@ func (c *Client) GetTaxes() ([]Tax, error) {
 		return nil, err
 	}
 	return taxes, nil
+}
+
+func (c *Client) GetTaxByCode(code string) (*Tax, error) {
+	taxes, err := c.GetTaxes()
+	if err != nil {
+		return nil, err
+	}
+	for _, tax := range taxes {
+		if tax.Code == code {
+			return &tax, nil
+		}
+	}
+	return nil, nil
 }
