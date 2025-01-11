@@ -27,24 +27,38 @@ type Tax struct {
 	TaxPct decimal.Decimal `json:"TaxPct"`
 }
 
-func (c *Client) GetTaxes() ([]Tax, error) {
+func (c *Client) GetTaxes(query *Tax) ([]Tax, error) {
 	taxes := []Tax{}
 	err := c.post(epGetListOfTaxes, struct{}{}, &taxes)
 	if err != nil {
 		return nil, err
 	}
-	return taxes, nil
-}
-
-func (c *Client) GetTaxByCode(code string) (*Tax, error) {
-	taxes, err := c.GetTaxes()
-	if err != nil {
-		return nil, err
+	if query == nil {
+		return taxes, nil
 	}
+	filteredTaxes := []Tax{}
+	var emptyGUID guid.GUID
+	var emptyDecimal decimal.Decimal
 	for _, tax := range taxes {
-		if tax.Code == code {
-			return &tax, nil
+		if query.ID != emptyGUID && tax.ID != query.ID {
+			continue
 		}
+		if query.Code != "" && tax.Code != query.Code {
+			continue
+		}
+		if query.Name != "" && tax.Name != query.Name {
+			continue
+		}
+		if query.NameEN != "" && tax.NameEN != query.NameEN {
+			continue
+		}
+		if query.NameRU != "" && tax.NameRU != query.NameRU {
+			continue
+		}
+		if query.TaxPct != emptyDecimal && tax.TaxPct != query.TaxPct {
+			continue
+		}
+		filteredTaxes = append(filteredTaxes, tax)
 	}
-	return nil, nil
+	return filteredTaxes, nil
 }

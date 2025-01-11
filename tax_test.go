@@ -3,10 +3,12 @@ package merit_test
 import (
 	"encoding/json"
 	"testing"
+
+	"github.com/egerong/merit-aktiva-go"
 )
 
 func TestGetTaxes(t *testing.T) {
-	taxes, err := testClient.GetTaxes()
+	taxes, err := testClient.GetTaxes(nil)
 	if err != nil {
 		t.Error(err)
 	}
@@ -18,8 +20,10 @@ func TestGetTaxes(t *testing.T) {
 }
 
 func TestGetTaxByCode(t *testing.T) {
-	code := "22%"
-	tax, err := testClient.GetTaxByCode(code)
+	query := merit.Tax{
+		Code: "22%",
+	}
+	tax, err := testClient.GetTaxes(&query)
 	if err != nil {
 		t.Error(err)
 	}
@@ -28,4 +32,10 @@ func TestGetTaxByCode(t *testing.T) {
 		t.Error(err)
 	}
 	t.Log(string(j))
+	if len(tax) == 0 {
+		t.Error("No tax found")
+	}
+	if len(tax) > 1 {
+		t.Error("Multiple taxes found")
+	}
 }
