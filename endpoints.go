@@ -79,7 +79,7 @@ const (
 	// epGetCostCentersList
 
 	// Dimensions
-	// epGetDimensionsList
+	epGetListOfDimensions apiEndpoint = "v2/getdimensions"
 	// epCreateDimensions
 	// epAddDimensionValues
 

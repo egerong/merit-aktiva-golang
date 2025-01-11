@@ -71,17 +71,17 @@ func (c *Client) GetInventoryReport(query GetInventoryReportQuery) ([]Article, e
 }
 
 type InventoryMovement struct {
-	DocumentID     string      `json:"DocumentId"`
-	DocDate        string      `json:"DocDate"`
-	DocNo          string      `json:"DocNo"`
-	Location1Code  string      `json:"Location1Code"`
-	Location2Code  string      `json:"Location2Code"`
-	DepartmentCode string      `json:"DepartmentCode"`
-	Type           int         `json:"Type"`
-	Comment        string      `json:"Comment"`
-	Dimensions     []Dimension `json:"Dimensions"`
-	Rows           []Row       `json:"Rows"`
-	ChangedDate    string      `json:"ChangedDate"`
+	DocumentID     string             `json:"DocumentId"`
+	DocDate        string             `json:"DocDate"`
+	DocNo          string             `json:"DocNo"`
+	Location1Code  string             `json:"Location1Code"`
+	Location2Code  string             `json:"Location2Code"`
+	DepartmentCode string             `json:"DepartmentCode"`
+	Type           int                `json:"Type"`
+	Comment        string             `json:"Comment"`
+	Dimensions     []DimensionsObject `json:"Dimensions"`
+	Rows           []Row              `json:"Rows"`
+	ChangedDate    string             `json:"ChangedDate"`
 }
 
 type Row struct {
@@ -102,13 +102,6 @@ type CostDimension struct {
 	Code        string  `json:"Code"`
 	AllocPct    float64 `json:"AllocPct"`
 	AllocAmount float64 `json:"AllocAmount"`
-}
-
-type Dimension struct {
-	ID         string `json:"Id"`
-	DimID      int    `json:"DimId"`
-	DimValueID string `json:"DimValueId"`
-	DimCode    string `json:"DimCode"`
 }
 
 type GetInventoryMovementsQuery struct {
