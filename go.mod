@@ -1,6 +1,6 @@
 module github.com/egerong/merit-aktiva-go
 
-go 1.21
+go 1.23
 
 toolchain go1.23.2
 
@@ -12,6 +12,7 @@ require (
 require (
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/beevik/guid v1.0.0 // indirect
+	github.com/go-json-experiment/json v0.0.0-20250108213703-50a1ba2c17a5 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
