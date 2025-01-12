@@ -79,32 +79,52 @@ func (c *Client) GetListOfSalesOffers(query GetSalesOffersQuery) ([]SalesOffer, 
 	return salesOffers, nil
 }
 
+type OfferType int
+
+const (
+	OfferTypeQuote OfferType = iota + 1
+	OfferTypeSalesOrder
+	OfferTypePrepaymentInvoice
+)
+
+type OfferStatus int
+
+const (
+	OfferStatusCreated OfferStatus = iota + 1
+	OfferStatusSent
+	OfferStatusApproved
+	OfferStatusRejected
+	OfferStatusCommentReceived
+	OfferStatusInvoiceCreated
+	OfferStatusCanceled
+)
+
 type CreateSalesOfferQuery struct {
 	Customer       CustomerObject // CustomerObject
 	DocDate        time.Time
 	ExpireDate     time.Time // if DocType 2 or 3, ExpireDate=DueDate
 	DeliveryDate   time.Time
-	DocType        int    // 1=quote, 2=sales order, 3=prepayment invoice
-	DocStatus      int    // 1=created, 2=sent, 3=approved, 4=rejected, 5=comment received, 6=invoice created, 7=canceled
-	OfferNo        string // Recuired
-	RefNo          string // Please validate this number yourself.
+	OfferNo        string      // Required
+	DocType        OfferType   // 1=quote, 2=sales order, 3=prepayment invoice
+	DocStatus      OfferStatus // 1=created, 2=sent, 3=approved, 4=rejected, 5=comment received, 6=invoice created, 7=canceled
+	RefNo          string      // Please validate this number yourself.
 	CurrencyCode   string
 	DepartmentCode string // If used then must be found in the company database.
-	ProjectCode    string // If used then must be found in the company database.
+	Dimensions     []DimensionsObject
 	OfferRow       []OfferRow
-	TaxAmount      []OfferVAT      // Required
-	RoundingAmount decimal.Decimal // Use it for getting PDF invoice to round number. Does not affect TotalAmount.
 	TotalAmount    decimal.Decimal // Amount without VAT
+	RoundingAmount decimal.Decimal // Use it for getting PDF invoice to round number. Does not affect TotalAmount.
+	TaxAmount      []TaxObject     // Required
 	Payment        OfferPayment
-	ContactInfo    string   // 4K
-	Hcomment       string   // If not specified, API will get it from client record, if it is written there.
-	Fcomment       string   // If not specified, API will get it from client record, if it is written there.
-	ProcCodes      []string // Poland only. Values: SW, EE, TP, TT_WNT, TT_D, MR_T, MR_UZ, I_42, I_63, B_SPV, B_SPV_DOSTAWA, BMRW_PROWIZJA, MPP
-	PolDocType     int      // Poland only. Values: 1-RO, 2-WEW, 3-FP, 4-OJPK
+	Hcomment       string // If not specified, API will get it from client record, if it is written there.
+	Fcomment       string // If not specified, API will get it from client record, if it is written there.
+	ReserveItems   bool
+	PrepaymPct     decimal.Decimal
+	Payer          PayerObject
 }
 
 type OfferRow struct {
-	Item           OfferItem       `json:"Item"` // Sometimes the volume of transactions in the sales software is very high and there is no need to duplicate all the data in accounting. In those cases, you could consider using the same item code for the items with the same VAT rate.
+	Item           ItemObject      `json:"Item"` // Sometimes the volume of transactions in the sales software is very high and there is no need to duplicate all the data in accounting. In those cases, you could consider using the same item code for the items with the same VAT rate.
 	Quantity       decimal.Decimal `json:"Quantity"`
 	Price          decimal.Decimal `json:"Price"`
 	DiscountPct    decimal.Decimal `json:"DiscountPct"`
@@ -118,22 +138,17 @@ type OfferRow struct {
 	CostCenterCode string          `json:"CostCenterCode"` // If used, must be found in the company database.
 }
 
-type OfferItem struct {
-	Code            string `json:"Code"`            // Required
-	Description     string `json:"Description"`     // Required
-	Type            int    `json:"Type"`            // 1 = stock item, 2 = service, 3 = item. Required.
-	UOMName         string `json:"UOMName"`         //
-	DefLocationCode string `json:"DefLocationCode"` //
-	EANCode         string `json:"EANCode"`         //
-}
-
 type OfferPayment struct {
 	PaymentMethod string          `json:"PaymentMethod"` // Name of the payment method. Must be found in the company database.
 	PaidAmount    decimal.Decimal `json:"PaidAmount"`    // Amount with VAT (not more) or less if partial payment
 	PaymDate      string          `json:"PaymDate"`      // YYYYmmddHHii
 }
 
-type OfferVAT struct {
-	TaxId  string          `json:"TaxId"`  // Required. Use gettaxes endpoint to detect the guid needed
-	Amount decimal.Decimal `json:"Amount"` // Required
+type PayerObject struct{}
+
+type CreateSalesOfferQueryFormated struct {
+	CreateSalesOfferQuery
+	DocDate      queryDate `json:"DocDate"`
+	ExpireDate   queryDate `json:"ExpireDate"`
+	DeliveryDate queryDate `json:"DeliveryDate"`
 }
