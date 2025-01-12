@@ -3,11 +3,29 @@ package merit
 import (
 	"fmt"
 
+	"github.com/Microsoft/go-winio/pkg/guid"
 	"github.com/shopspring/decimal"
 )
 
+type ItemType int
+
+const (
+	ItemTypeStock ItemType = iota + 1
+	ItemTypeService
+	ItemTypeItem
+)
+
+type ItemObject struct {
+	Code            string   `json:"Code"`            // Required
+	Description     string   `json:"Description"`     // Required
+	Type            ItemType `json:"Type"`            // 1 = stock item, 2 = service, 3 = item. Required.
+	UOMName         string   `json:"UOMName"`         //
+	DefLocationCode string   `json:"DefLocationCode"` //
+	EANCode         string   `json:"EANCode"`         //
+}
+
 type Item struct {
-	ID                   string          `json:"ItemId"`
+	ID                   guid.GUID       `json:"ItemId"`
 	Code                 string          `json:"Code"`
 	Name                 string          `json:"Name"`
 	UnitofMeasureName    string          `json:"UnitofMeasureName"`
