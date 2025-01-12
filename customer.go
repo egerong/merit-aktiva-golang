@@ -23,47 +23,6 @@ func (c *Client) GetCustomers(query GetCustomersQuery) ([]Customer, error) {
 	return customers, nil
 }
 
-// CustomerId
-// Name
-// RegNo
-// Contact
-// PhoneNo
-// Address
-// City
-// Email
-// CurrencyCode
-// CustomerGroupId
-// CustomerGroupName
-// PostalCode
-// CountryName
-// CountryCode
-// County
-// PhoneNo2
-// FaxNo
-// HomePage
-// PaymentDeadLine
-// OverdueCharge
-// CustomerGroupName
-// VatRegNo
-// NotTDCustomer
-// BankName
-// BankAccount
-// SalesInvLang
-// RefNoBase
-// Comments ( Array of comments)
-// Dimensions (Array of dimensions)
-// ChangedDate
-// Comments object:
-
-// CommDate
-// Comment
-// Dimensions object:
-
-// Id
-// DimId
-// DimValueId
-// DimCode
-
 type Customer struct {
 	ID                guid.GUID          `json:"CustomerId"`
 	Name              string             `json:"Name"`

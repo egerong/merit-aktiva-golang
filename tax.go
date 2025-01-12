@@ -6,7 +6,7 @@ import (
 )
 
 type TaxObject struct {
-	TaxID  string          `json:"TaxId"`  // Required. Use gettaxes endpoint to detect the guid needed
+	TaxID  guid.GUID       `json:"TaxId"`  // Required. Use gettaxes endpoint to detect the guid needed
 	Amount decimal.Decimal `json:"Amount"` // Required
 }
 
