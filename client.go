@@ -5,12 +5,12 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
 	"time"
 
+	"github.com/go-json-experiment/json"
 	"go.uber.org/zap"
 )
 
@@ -103,7 +103,8 @@ func (c *Client) post(endpoint apiEndpoint, payload interface{}, dest interface{
 	}
 
 	if dest != nil {
-		if err = json.NewDecoder(body).Decode(&dest); err != nil {
+		err = json.Unmarshal(body.Bytes(), dest)
+		if err != nil {
 			return err
 		}
 	}
