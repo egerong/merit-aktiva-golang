@@ -1,6 +1,9 @@
 package merit
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type queryDate struct {
 	time.Time
