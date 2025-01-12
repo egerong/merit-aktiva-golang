@@ -67,8 +67,8 @@ type CustomerObject struct {
 	NotTDCustomer   bool             `json:"NotTDCustomer,omitempty"` // Required when customer is added. EE True for physical persons and foreign companies. PL True for physical persons. Allowed “true” or “false” (lowercase).
 	VatRegNo        string           `json:"VatRegNo,omitempty"`
 	CurrencyCode    string           `json:"CurrencyCode,omitempty"`
-	PaymentDeadLine int              `json:"PaymentDeadLine,omitempty"` // If missing then taken from default settings.
-	OverDueCharge   *decimal.Decimal `json:"OverDueCharge,omitempty"`   // If missing then taken from default settings.
+	PaymentDeadLine int              `json:"PaymentDeadLine,omitzero"` // If missing then taken from default settings.
+	OverDueCharge   *decimal.Decimal `json:"OverDueCharge,omitempty"`  // If missing then taken from default settings.
 	Address         string           `json:"Address,omitempty"`
 	City            string           `json:"City,omitempty"`
 	County          string           `json:"County,omitempty"`
@@ -83,6 +83,6 @@ type CustomerObject struct {
 	PartyCode       string           `json:"PartyCode,omitempty"`
 	RefNoBase       string           `json:"RefNoBase,omitempty"`
 	EInvPaymId      string           `json:"EInvPaymId,omitempty"`
-	EInvOperator    int              `json:"EInvOperator,omitempty"` // 1 - Not exist, 2 - E-invoices to the bank through Omniva, 3 - Bank ( full extent E-invoice), 4- Bank (limited extent E-invoice)
+	EInvOperator    int              `json:"EInvOperator,omitzero"` // 1 - Not exist, 2 - E-invoices to the bank through Omniva, 3 - Bank ( full extent E-invoice), 4- Bank (limited extent E-invoice)
 	BankAccount     string           `json:"BankAccount,omitempty"`
 }

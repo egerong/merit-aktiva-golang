@@ -1,11 +1,31 @@
 package merit
 
 import (
-	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/Microsoft/go-winio/pkg/guid"
+	"github.com/go-json-experiment/json"
+	"github.com/go-json-experiment/json/jsontext"
 	"github.com/shopspring/decimal"
+)
+
+const (
+	OfferTypeQuote OfferType = iota + 1
+	OfferTypeSalesOrder
+	OfferTypePrepaymentInvoice
+)
+
+type OfferStatus int
+
+const (
+	OfferStatusCreated OfferStatus = iota + 1
+	OfferStatusSent
+	OfferStatusApproved
+	OfferStatusRejected
+	OfferStatusCommentReceived
+	OfferStatusInvoiceCreated
+	OfferStatusCanceled
 )
 
 type SalesOffer struct {
@@ -41,8 +61,8 @@ type SalesOffer struct {
 	PaidAmount      decimal.Decimal `json:"PaidAmount"`
 	EInvSent        bool            `json:"EInvSent"`
 	EmailSent       string          `json:"EmailSent"`
-	DocType         int             `json:"DocType"`
-	DocStatus       int             `json:"DocStatus"`
+	DocType         OfferType       `json:"DocType"`
+	DocStatus       OfferStatus     `json:"DocStatus"`
 	DeliveryDate    string          `json:"DeliveryDate"`
 	Paid            bool            `json:"Paid"`
 	ChangedDate     string          `json:"ChangedDate"`
@@ -83,35 +103,17 @@ func (c *Client) GetListOfSalesOffers(query GetSalesOffersQuery) ([]SalesOffer, 
 
 type OfferType int
 
-const (
-	OfferTypeQuote OfferType = iota + 1
-	OfferTypeSalesOrder
-	OfferTypePrepaymentInvoice
-)
-
-type OfferStatus int
-
-const (
-	OfferStatusCreated OfferStatus = iota + 1
-	OfferStatusSent
-	OfferStatusApproved
-	OfferStatusRejected
-	OfferStatusCommentReceived
-	OfferStatusInvoiceCreated
-	OfferStatusCanceled
-)
-
 type CreateSalesOfferQuery struct {
 	Customer       CustomerObject // CustomerObject
 	DocDate        time.Time
 	ExpireDate     time.Time // if DocType 2 or 3, ExpireDate=DueDate
 	DeliveryDate   time.Time
-	OfferNo        string       `json:"OfferNo"`             // Required
-	DocType        *OfferType   `json:"DocType,omitempty"`   // 1=quote, 2=sales order, 3=prepayment invoice
-	DocStatus      *OfferStatus `json:"DocStatus,omitempty"` // 1=created, 2=sent, 3=approved, 4=rejected, 5=comment received, 6=invoice created, 7=canceled
-	RefNo          string       `json:"RefNo,omitempty"`     // Please validate this number yourself.
-	CurrencyCode   string       `json:"CurrencyCode,omitempty"`
-	DepartmentCode string       `json:"DepartmentCode,omitempty"` // If used then must be found in the company database.
+	OfferNo        string      `json:"OfferNo"`            // Required
+	DocType        OfferType   `json:"DocType,omitzero"`   // 1=quote, 2=sales order, 3=prepayment invoice
+	DocStatus      OfferStatus `json:"DocStatus,omitzero"` // 1=created, 2=sent, 3=approved, 4=rejected, 5=comment received, 6=invoice created, 7=canceled
+	RefNo          string      `json:"RefNo,omitempty"`    // Please validate this number yourself.
+	CurrencyCode   string      `json:"CurrencyCode,omitempty"`
+	DepartmentCode string      `json:"DepartmentCode,omitempty"` // If used then must be found in the company database.
 	Dimensions     []DimensionsObject
 	OfferRow       []OfferRow
 	TotalAmount    *decimal.Decimal `json:"TotalAmount,omitempty"`    // Amount without VAT
@@ -176,11 +178,12 @@ func (c *Client) CreateSalesOffer(query CreateSalesOfferQuery) (*CreateSalesOffe
 		ExpireDate:            queryDate{query.ExpireDate, "20060102"},
 		DeliveryDate:          queryDate{query.DeliveryDate, "20060102"},
 	}
-	j, err := json.MarshalIndent(queryFormated, "", "  ")
+	j, err := json.Marshal(queryFormated)
 	if err != nil {
 		return nil, err
 	}
-	c.logger.Info(string(j))
+	(*jsontext.Value)(&j).Indent("", "  ") // indent for readability
+	fmt.Print(string(j))
 	var response CreateSalesOfferResponse
 	err = c.post(epCreateSalesOffer, queryFormated, &response)
 	if err != nil {

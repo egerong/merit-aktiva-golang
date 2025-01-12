@@ -18,7 +18,7 @@ const (
 type ItemObject struct {
 	Code            string   `json:"Code"`                      // Required
 	Description     string   `json:"Description"`               // Required
-	Type            ItemType `json:"Type,omitempty"`            // 1 = stock item, 2 = service, 3 = item. Required.
+	Type            ItemType `json:"Type,omitzero"`             // 1 = stock item, 2 = service, 3 = item. Required.
 	UOMName         string   `json:"UOMName,omitempty"`         //
 	DefLocationCode string   `json:"DefLocationCode,omitempty"` //
 	EANCode         string   `json:"EANCode,omitempty"`         //
