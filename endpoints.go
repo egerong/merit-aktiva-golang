@@ -12,7 +12,7 @@ const (
 
 	// Sales offers
 	epGetListOfSalesOffers apiEndpoint = "v2/getoffers"
-	// epCreateSalesOffer
+	epCreateSalesOffer     apiEndpoint = "v2/sendoffer"
 	// epSetOfferStatus
 	// epCreateInvoiceFromOffer
 	// epGetSalesOfferDetails

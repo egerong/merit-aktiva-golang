@@ -1,8 +1,10 @@
 package merit
 
 import (
+	"encoding/json"
 	"time"
 
+	"github.com/Microsoft/go-winio/pkg/guid"
 	"github.com/shopspring/decimal"
 )
 
@@ -104,38 +106,38 @@ type CreateSalesOfferQuery struct {
 	DocDate        time.Time
 	ExpireDate     time.Time // if DocType 2 or 3, ExpireDate=DueDate
 	DeliveryDate   time.Time
-	OfferNo        string      // Required
-	DocType        OfferType   // 1=quote, 2=sales order, 3=prepayment invoice
-	DocStatus      OfferStatus // 1=created, 2=sent, 3=approved, 4=rejected, 5=comment received, 6=invoice created, 7=canceled
-	RefNo          string      // Please validate this number yourself.
-	CurrencyCode   string
-	DepartmentCode string // If used then must be found in the company database.
+	OfferNo        string       `json:"OfferNo"`             // Required
+	DocType        *OfferType   `json:"DocType,omitempty"`   // 1=quote, 2=sales order, 3=prepayment invoice
+	DocStatus      *OfferStatus `json:"DocStatus,omitempty"` // 1=created, 2=sent, 3=approved, 4=rejected, 5=comment received, 6=invoice created, 7=canceled
+	RefNo          string       `json:"RefNo,omitempty"`     // Please validate this number yourself.
+	CurrencyCode   string       `json:"CurrencyCode,omitempty"`
+	DepartmentCode string       `json:"DepartmentCode,omitempty"` // If used then must be found in the company database.
 	Dimensions     []DimensionsObject
 	OfferRow       []OfferRow
-	TotalAmount    decimal.Decimal // Amount without VAT
-	RoundingAmount decimal.Decimal // Use it for getting PDF invoice to round number. Does not affect TotalAmount.
-	TaxAmount      []TaxObject     // Required
-	Payment        OfferPayment
-	Hcomment       string // If not specified, API will get it from client record, if it is written there.
-	Fcomment       string // If not specified, API will get it from client record, if it is written there.
-	ReserveItems   bool
-	PrepaymPct     decimal.Decimal
-	Payer          PayerObject
+	TotalAmount    *decimal.Decimal `json:"TotalAmount,omitempty"`    // Amount without VAT
+	RoundingAmount *decimal.Decimal `json:"RoundingAmount,omitempty"` // Use it for getting PDF invoice to round number. Does not affect TotalAmount.
+	TaxAmount      []TaxObject      // Required
+	Payment        *OfferPayment    `json:"Payment,omitempty"`
+	HeaderComment  string           `json:"Hcomment,omitempty"`     // If not specified, API will get it from client record, if it is written there.
+	FooterComment  string           `json:"Fcomment,omitempty"`     // If not specified, API will get it from client record, if it is written there.
+	ReserveItems   bool             `json:"ReserveItems,omitempty"` // If true, then stock items will be reserved.
+	PrepaymPct     *decimal.Decimal `json:"PrepaymPct,omitempty"`   // Prepayment percentage. Required for prepayment invoices.
+	Payer          *PayerObject     `json:"Payer,omitempty"`
 }
 
 type OfferRow struct {
-	Item           ItemObject      `json:"Item"` // Sometimes the volume of transactions in the sales software is very high and there is no need to duplicate all the data in accounting. In those cases, you could consider using the same item code for the items with the same VAT rate.
-	Quantity       decimal.Decimal `json:"Quantity"`
-	Price          decimal.Decimal `json:"Price"`
-	DiscountPct    decimal.Decimal `json:"DiscountPct"`
-	DiscountAmount decimal.Decimal `json:"DiscountAmount"` // Amount * Price * (DiscountPCt / 100). This is not rounded. Will be substracted from row amount before row roundings.
-	TaxId          string          `json:"TaxId"`
-	LocationCode   string          `json:"LocationCode"`   // Used for stock items and multiple stocks. If used then must be found in the company database.
-	DepartmentCode string          `json:"DepartmentCode"` // If used then must be found in the company database.
-	ItemCostAmount decimal.Decimal `json:"ItemCostAmount"` // Required for credit invoices when crediting stock items.
-	GLAccountCode  string          `json:"GLAccountCode"`  // If used, must be found in the company database.
-	ProjectCode    string          `json:"ProjectCode"`    // If used, must be found in the company database.
-	CostCenterCode string          `json:"CostCenterCode"` // If used, must be found in the company database.
+	Item           ItemObject       `json:"Item"` // Sometimes the volume of transactions in the sales software is very high and there is no need to duplicate all the data in accounting. In those cases, you could consider using the same item code for the items with the same VAT rate.
+	Quantity       decimal.Decimal  `json:"Quantity"`
+	Price          decimal.Decimal  `json:"Price"`
+	DiscountPct    *decimal.Decimal `json:"DiscountPct,omitempty"`
+	DiscountAmount *decimal.Decimal `json:"DiscountAmount,omitempty"` // Amount * Price * (DiscountPCt / 100). This is not rounded. Will be substracted from row amount before row roundings.
+	TaxId          string           `json:"TaxId,omitempty"`
+	LocationCode   string           `json:"LocationCode,omitempty"`   // Used for stock items and multiple stocks. If used then must be found in the company database.
+	DepartmentCode string           `json:"DepartmentCode,omitempty"` // If used then must be found in the company database.
+	ItemCostAmount *decimal.Decimal `json:"ItemCostAmount,omitempty"` // Required for credit invoices when crediting stock items.
+	GLAccountCode  string           `json:"GLAccountCode,omitempty"`  // If used, must be found in the company database.
+	ProjectCode    string           `json:"ProjectCode,omitempty"`    // If used, must be found in the company database.
+	CostCenterCode string           `json:"CostCenterCode,omitempty"` // If used, must be found in the company database.
 }
 
 type OfferPayment struct {
@@ -146,9 +148,43 @@ type OfferPayment struct {
 
 type PayerObject struct{}
 
+// CustomerId
+// InvoiceId
+// InvoiceNo
+// RefNo
+// NewCustomer
+
+type CreateSalesOfferResponse struct {
+	CustomerID  guid.GUID `json:"CustomerId"`
+	InvoiceID   guid.GUID `json:"InvoiceId"`
+	InvoiceNo   string    `json:"InvoiceNo"`
+	RefNo       string    `json:"RefNo"`
+	NewCustomer bool      `json:"NewCustomer"`
+}
+
 type CreateSalesOfferQueryFormated struct {
 	CreateSalesOfferQuery
-	DocDate      queryDate `json:"DocDate"`
-	ExpireDate   queryDate `json:"ExpireDate"`
-	DeliveryDate queryDate `json:"DeliveryDate"`
+	DocDate      queryDate `json:"DocDate,omitzero"`
+	ExpireDate   queryDate `json:"ExpireDate,omitzero"`
+	DeliveryDate queryDate `json:"DeliveryDate,omitzero"`
+}
+
+func (c *Client) CreateSalesOffer(query CreateSalesOfferQuery) (*CreateSalesOfferResponse, error) {
+	queryFormated := CreateSalesOfferQueryFormated{
+		CreateSalesOfferQuery: query,
+		DocDate:               queryDate{query.DocDate, "20060102"},
+		ExpireDate:            queryDate{query.ExpireDate, "20060102"},
+		DeliveryDate:          queryDate{query.DeliveryDate, "20060102"},
+	}
+	j, err := json.MarshalIndent(queryFormated, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	c.logger.Info(string(j))
+	var response CreateSalesOfferResponse
+	err = c.post(epCreateSalesOffer, queryFormated, &response)
+	if err != nil {
+		return nil, err
+	}
+	return &response, nil
 }
