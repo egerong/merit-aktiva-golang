@@ -17,5 +17,6 @@ type queryDate struct {
 // }
 
 func (d queryDate) MarshalJSON() ([]byte, error) {
-	return []byte(d.Time.Format(d.format)), nil
+	s := fmt.Sprintf("\"%s\"", d.Time.Format(d.format))
+	return []byte(s), nil
 }
